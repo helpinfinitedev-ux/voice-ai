@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/(dashboard)/_components/add-agents/add-agent.jsx",
+    "convex/schema.ts",
+    "convex/agents.ts",
+    "lib/actions/agent.actions.js",
+    "components/workspace-switcher.jsx",
+    "components/navbar.jsx",
+    "components/custom/nav-tabs.jsx"
+  ],
+  "exclude": ["node_modules"]
+}

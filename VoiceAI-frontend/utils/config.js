@@ -1,0 +1,10 @@
+export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export const appBaseUrl = process.env.NEXT_PUBLIC_APP_BASE_URL;
+const calendlyClientId = process.env.NEXT_PUBLIC_CALENDLY_CLIENT_ID;
+export const calendlyUrl = `https://auth.calendly.com/oauth/authorize?client_id=${calendlyClientId}&response_type=code&redirect_uri=${appBaseUrl}`;
+export const paddleAPIKey = process.env.NEXT_PUBLIC_PADDLE_API_KEY;
+export const paddleBaseUrl = process.env.NEXT_PUBLIC_PADDLE_BASE_URL;
+export const paddleClientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
+export const paddleEnvironment = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT;
+export const paddleSuccessURL = process.env.NEXT_PUBLIC_PADDLE_SUCCESS_URL;
+export const productId = process.env.NEXT_PUBLIC_PRODUCT_ID;
