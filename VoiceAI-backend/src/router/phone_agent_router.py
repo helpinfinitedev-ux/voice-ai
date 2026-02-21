@@ -70,8 +70,11 @@ PADDLE_WEBHOOK_SECRET_KEY = os.environ['PADDLE_WEBHOOK_SECRET_KEY']
 async def create_user_agent(user_id: str, data: CreateAgentRequest):
     create_retell_agent_data = {
         "agent_name": data.name,
-        "llm_websocket_url": "",
-        "voice_id": data.voice_id
+        "voice_id": data.voice_id,
+        "response_engine": {
+            "type": "custom-llm",
+            "llm_websocket_url": f"{WEBSOCKET_BASE_URL}/llm/pending"
+        }
     }
     retell_agent_object = create_agent(create_retell_agent_data)
     if retell_agent_object == None:
@@ -81,7 +84,10 @@ async def create_user_agent(user_id: str, data: CreateAgentRequest):
     retell_agent_id = retell_agent_object.agent_id
 
     update_retell_agent_data = {
-        "llm_websocket_url": f"{WEBSOCKET_BASE_URL}/llm/{retell_agent_id}"
+        "response_engine": {
+            "type": "custom-llm",
+            "llm_websocket_url": f"{WEBSOCKET_BASE_URL}/llm/{retell_agent_id}"
+        }
     }
     
     update_retell_agent_object = update_agent(retell_agent_id, update_retell_agent_data)
@@ -822,8 +828,11 @@ async def get_calendly_schedules(user_id: str):
 async def create_user_campaign(user_id: str, data: CreateCampaignRequest):
     create_retell_agent_data = {
         "agent_name": data.agent_name,
-        "llm_websocket_url": "",
-        "voice_id": data.voice_id
+        "voice_id": data.voice_id,
+        "response_engine": {
+            "type": "custom-llm",
+            "llm_websocket_url": f"{WEBSOCKET_BASE_URL}/llm/pending"
+        }
     }
     retell_agent_object = create_agent(create_retell_agent_data)
     if retell_agent_object == None:
@@ -833,7 +842,10 @@ async def create_user_campaign(user_id: str, data: CreateCampaignRequest):
     retell_agent_id = retell_agent_object.agent_id
 
     update_retell_agent_data = {
-        "llm_websocket_url": f"{WEBSOCKET_BASE_URL}/llm/{retell_agent_id}"
+        "response_engine": {
+            "type": "custom-llm",
+            "llm_websocket_url": f"{WEBSOCKET_BASE_URL}/llm/{retell_agent_id}"
+        }
     }
     
     update_retell_agent_object = update_agent(retell_agent_id, update_retell_agent_data)
