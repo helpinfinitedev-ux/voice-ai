@@ -27,7 +27,7 @@ from src.models.update_agent_request import ArchiveAgentPayload, UpdateAgentRequ
 from fastapi import APIRouter, WebSocket, Request, HTTPException, Header
 from src.models.create_campaign_request import CreateCampaignRequest
 from src.calendly.apis import authorize_account, get_user_availability_schedules, get_user_scheduled_events
-from src.retell.retell_helpers import create_agent, update_agent, delete_agent, get_call, register_call
+from src.retell.retell_helpers import create_agent, update_agent, delete_agent, get_call, register_call, create_web_call
 from src.calendly.worker import convert_schedule_to_string
 from src.models.subscription import PlanInfo
 from src.auth.session import save_user_session, remove_user_session
@@ -226,6 +226,25 @@ async def delete_user_agent(user_id: str, agent_id: str):
     phone_agents_collection.delete_one(filter)
 
     return JSONResponse(status_code=200, content={"message": "agent deleted successfully"})
+
+@router.post("/agents/{agent_id}/create-web-call")
+async def agent_create_web_call(agent_id: str, request: Request):
+    """Create a web call and return access_token for RetellWebClient.startCall()."""
+    try:
+        req_body = await request.json()
+    except Exception:
+        req_body = {}
+    metadata = req_body.get("metadata") if isinstance(req_body, dict) else None
+
+    response = create_web_call(agent_id=agent_id, metadata=metadata)
+    if response is None:
+        return JSONResponse(status_code=500, content={"message": "Unable to create web call"})
+
+    return JSONResponse(status_code=201, content={
+        "access_token": response.access_token,
+        "call_type": getattr(response, "call_type", "web_call"),
+    })
+
 
 @router.post("/agents/{agent_id}/register-call")
 async def agent_register_call(agent_id: str, request: Request):

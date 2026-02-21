@@ -39,3 +39,11 @@ def get_call(call_id):
     return retell.call.retrieve(
         call_id=call_id
     )
+
+
+def create_web_call(agent_id: str, metadata: Dict[str, Any] = None):
+    """Create a web call and return access_token for frontend."""
+    params: Dict[str, Any] = {"agent_id": agent_id}
+    if metadata is not None:
+        params["metadata"] = metadata
+    return retell.call.create_web_call(**params)
