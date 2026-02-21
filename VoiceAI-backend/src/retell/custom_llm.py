@@ -60,7 +60,6 @@ end_call_function = {
 class LlmClient:
     def __init__(self):
         self.client = OpenAI(
-            organization=os.environ['OPENAI_ORGANIZATION_ID'],
             api_key=os.environ['OPENAI_API_KEY'],
         )
 

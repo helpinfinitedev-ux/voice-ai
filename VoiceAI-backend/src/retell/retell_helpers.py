@@ -9,9 +9,15 @@ retell = Retell(
 )
 
 def register_call(data: Dict[str, Any]):
-    return retell.call.register(
-        **data
-    )
+    # retell-sdk v5 uses register_phone_call; filter to supported params
+    params = {
+        "agent_id": data["agent_id"],
+        "direction": data.get("direction", "inbound"),
+        "from_number": data.get("from_number", ""),
+        "to_number": data.get("to_number", ""),
+        "metadata": data.get("metadata"),
+    }
+    return retell.call.register_phone_call(**{k: v for k, v in params.items() if v is not None})
 
 def create_agent(data: Dict[str, Any]):
     return retell.agent.create(

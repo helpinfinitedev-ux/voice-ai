@@ -2,7 +2,7 @@ from urllib import parse
 from src.router.base import Base
 from fastapi import APIRouter, Request
 from twilio.twiml.voice_response import VoiceResponse
-from retell.resources.call import RegisterCallResponse
+from retell.resources.call import PhoneCallResponse
 from fastapi.responses import JSONResponse, PlainTextResponse
 
 class TwilioVoiceWebhook(Base):
@@ -73,14 +73,12 @@ class TwilioVoiceWebhook(Base):
                         return PlainTextResponse(str(response), media_type='text/xml')
                         # agent_id_to_machine_detection[agent_id_path] = post_data["CallSid"]
 
-            call_response: RegisterCallResponse = self.retell.call.register(
-                agent_id=agent_id, 
-                audio_websocket_protocol="twilio", 
-                audio_encoding="mulaw", 
-                sample_rate=8000,
+            call_response: PhoneCallResponse = self.retell.call.register_phone_call(
+                agent_id=agent_id,
+                direction="inbound",
                 from_number=str(post_data.get('From', '')),
                 to_number=str(post_data.get('To', '')),
-                metadata={"twilio_call_sid": post_data['CallSid'],}
+                metadata={"twilio_call_sid": post_data['CallSid']},
             )
             if call_response:
                 response = VoiceResponse()

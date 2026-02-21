@@ -15,7 +15,7 @@ from typing import Annotated
 from src.db.redis import get_redis
 from src.db.mongodb import get_database
 from generateApiKey import generateApiKey
-from retell.resources.call import RegisterCallResponse
+from retell.resources.call import PhoneCallResponse
 from src.retell.custom_llm import LlmClient
 # from src.retell.anthropic_custom_llm import LlmClient
 from src.twilio.twilio_server import TwilioClient
@@ -230,23 +230,22 @@ async def delete_user_agent(user_id: str, agent_id: str):
 @router.post("/agents/{agent_id}/register-call")
 async def agent_register_call(agent_id: str, request: Request):
     req_body = await request.json()
-    if "audio_encoding" not in req_body or "audio_websocket_protocol" not in req_body or "sample_rate" not in req_body:
-        return JSONResponse(status_code=400, content={"message": "Invalid data"})
-
     data = {
         "agent_id": agent_id,
-        "audio_websocket_protocol": req_body["audio_websocket_protocol"], 
-        "audio_encoding": req_body["audio_encoding"], 
-        "sample_rate": req_body["sample_rate"]
+        "direction": req_body.get("direction", "inbound"),
+        "from_number": req_body.get("from_number", ""),
+        "to_number": req_body.get("to_number", ""),
+        "metadata": req_body.get("metadata"),
     }
 
     response = register_call(data)
     if response == None:
         return JSONResponse(status_code=500, content={"message": "Unable to register call"})
     
+    # retell-sdk v5: PhoneCallResponse has call_id; sample_rate 8000 for Twilio compat
     res_data = {
         "call_id": response.call_id,
-        "sample_rate": response.sample_rate
+        "sample_rate": 8000,
     }
 
     return JSONResponse(status_code=201, content=res_data)
@@ -317,14 +316,12 @@ async def handle_twilio_voice_webhook(request: Request, agent_id_path: str, camp
                     return PlainTextResponse(str(response), media_type='text/xml')
                     # agent_id_to_machine_detection[agent_id_path] = post_data["CallSid"]
 
-        call_response: RegisterCallResponse = twilio_client.retell.call.register(
-            agent_id=agent_id_path, 
-            audio_websocket_protocol="twilio", 
-            audio_encoding="mulaw", 
-            sample_rate=8000,
+        call_response: PhoneCallResponse = twilio_client.retell.call.register_phone_call(
+            agent_id=agent_id_path,
+            direction="inbound",
             from_number=str(post_data.get('From', '')),
             to_number=str(post_data.get('To', '')),
-            metadata={"twilio_call_sid": post_data['CallSid'],}
+            metadata={"twilio_call_sid": post_data['CallSid']},
         )
         if call_response:
             response = VoiceResponse()
