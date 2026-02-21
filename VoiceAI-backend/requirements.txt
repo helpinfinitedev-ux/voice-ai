@@ -1,0 +1,3 @@
+# Pin httpx to avoid compatibility issue with retell-sdk
+# https://github.com/encode/httpx/issues/2131 - httpx 0.28+ removed 'proxies' arg
+httpx>=0.26,<0.28
